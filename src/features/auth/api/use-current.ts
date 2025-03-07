@@ -5,12 +5,12 @@ export const useCurrent = () => {
 	const query = useQuery({
 		queryKey: ["current"],
 		queryFn: async () => {
-			const res = await client.api.auth.current["$get"]();
+			const response = await client.api.auth.current["$get"]();
 
-			if (!res.ok) {
+			if (!response.ok) {
 				return null;
 			}
-			const { data } = await res.json();
+			const { data } = await response.json();
             return data;
 		},
 	});
