@@ -6,25 +6,24 @@ interface DottedSeparatorProps {
   height?: string;
   dotSize?: string;
   gapSize?: string;
-  direction?: "horizontal" | "verical";
+  direction?: "horizontal" | "vertical";
 }
 
 export const DottedSeparator = ({
   className,
-  color = "#d4d4d8",
+  color = "#D4D4D8",
   height = "2px",
   dotSize = "2px",
   gapSize = "6px",
   direction = "horizontal",
 }: DottedSeparatorProps) => {
   const isHorizontal = direction === "horizontal";
-
   return (
     <div
       className={cn(
         isHorizontal
-          ? "flex w-full items-center"
-          : "flex flex-col h-full items-center",
+          ? "w-full flex items-center"
+          : "h-full flex flex-col items-center",
         className
       )}
     >

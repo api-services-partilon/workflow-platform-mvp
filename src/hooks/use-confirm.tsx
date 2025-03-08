@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import { Button, type ButtonProps } from "@/components/ui/button";
 import { ResponsiveModal } from "@/components/responsive-modal";
+import { Button, type ButtonProps } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -13,8 +13,8 @@ import {
 export const useConfirm = (
   title: string,
   message: string,
-  varaint: ButtonProps["variant"] = "primary"
-): [() => JSX.Element, () => Promise<unknown>] => {
+  variant: ButtonProps["variant"] = "primary"
+): [() => React.JSX.Element, () => Promise<unknown>] => {
   const [promise, setPromise] = useState<{
     resolve: (value: boolean) => void;
   } | null>(null);
@@ -41,13 +41,13 @@ export const useConfirm = (
 
   const ConfirmationDialog = () => (
     <ResponsiveModal open={promise !== null} onOpenChange={handleClose}>
-      <Card className="w-full h-full border-none shadow-none">
+      <Card className="size-full border-none shadow-none">
         <CardContent className="pt-8">
-          <CardHeader>
+          <CardHeader className="p-0">
             <CardTitle>{title}</CardTitle>
             <CardDescription>{message}</CardDescription>
           </CardHeader>
-          <div className="pt-4 w-full flex flex-col gap-y-2 lg:flex-row gapt-x-2 items-center justify-end">
+          <div className="pt-4 w-full flex flex-col gap-y-2 lg:flex-row gap-x-2 items-center justify-end">
             <Button
               onClick={handleCancel}
               variant="outline"
@@ -57,7 +57,7 @@ export const useConfirm = (
             </Button>
             <Button
               onClick={handleConfirm}
-              variant={varaint}
+              variant={variant}
               className="w-full lg:w-auto"
             >
               Confirm

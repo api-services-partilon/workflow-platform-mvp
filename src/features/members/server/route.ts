@@ -1,12 +1,14 @@
-import { createAdminClient } from "@/lib/appwrite";
-import { sessionMiddleware } from "@/lib/session-middleware";
-import { zValidator } from "@hono/zod-validator";
-import { Hono } from "hono";
 import { z } from "zod";
-import { getMember } from "../utils";
-import { DATABASE_ID, MEMBERS_ID } from "@/config";
+import { Hono } from "hono";
 import { Query } from "node-appwrite";
-import { MemberRole } from "../types";
+import { zValidator } from "@hono/zod-validator";
+
+import { sessionMiddleware } from "@/lib/session-middleware";
+import { createAdminClient } from "@/lib/appwrite";
+import { DATABASE_ID, MEMBERS_ID } from "@/config";
+
+import { getMember } from "../utils";
+import { Member, MemberRole } from "../types";
 
 const app = new Hono()
   .get(
@@ -29,23 +31,23 @@ const app = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      const members = await databases.listDocuments(DATABASE_ID, MEMBERS_ID, [
+      const members = await databases.listDocuments<Member>(DATABASE_ID, MEMBERS_ID, [
         Query.equal("workspaceId", workspaceId),
       ]);
 
       const populatedMembers = await Promise.all(
         members.documents.map(async (member) => {
           const user = await users.get(member.userId);
-          return { ...member, name: user.name, email: user.email };
+
+          return {
+            ...member,
+            name: user.name || user.email,
+            email: user.email,
+          };
         })
       );
 
-      return c.json({
-        data: {
-          ...members,
-          documents: populatedMembers,
-        },
-      });
+      return c.json({ data: { ...members, documents: populatedMembers } });
     }
   )
   .delete("/:memberId", sessionMiddleware, async (c) => {
@@ -80,7 +82,7 @@ const app = new Hono()
     }
 
     if (allMembersInWorkspace.total === 1) {
-      return c.json({ error: "Cannot delete the only member" }, 400);
+      return c.json({ error: "Cannot delete the only member." }, 400);
     }
 
     await databases.deleteDocument(DATABASE_ID, MEMBERS_ID, memberId);
@@ -123,18 +125,15 @@ const app = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      if (
-        allMembersInWorkspace.total === 1 &&
-        c.req.valid("json").role === MemberRole.MEMBER
-      ) {
-        return c.json({ error: "Cannot downgrade the only member" }, 400);
+      if (allMembersInWorkspace.total === 1) {
+        return c.json({ error: "Cannot downgrade the only member." }, 400);
       }
 
       await databases.updateDocument(DATABASE_ID, MEMBERS_ID, memberId, {
         role,
       });
 
-      return c.json({ data: { $id: memberToUpdate.$id, role } });
+      return c.json({ data: { $id: memberToUpdate.$id } });
     }
   );
 

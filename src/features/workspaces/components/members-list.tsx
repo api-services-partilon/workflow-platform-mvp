@@ -1,31 +1,33 @@
 "use client";
 
-import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowLeftIcon, MoreVerticalIcon } from "lucide-react";
-import Link from "next/link";
-import { DottedSeparator } from "@/components/dotted-separator";
-import { useGetMembers } from "@/features/members/api/use-get-members";
 import { Fragment } from "react";
+import { ArrowLeft, MoreVerticalIcon } from "lucide-react";
+import Link from "next/link";
+
 import { MemberAvatar } from "@/features/members/components/member-avatar";
-import { Separator } from "@/components/ui/separator";
+import { useGetMembers } from "@/features/members/api/use-get-members";
+import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { useDeleteMember } from "@/features/members/api/use-delete-member";
+import { useUpdateMember } from "@/features/members/api/use-update-member";
+import { MemberRole } from "@/features/members/types";
+
+import { useConfirm } from "@/hooks/use-confirm";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DottedSeparator } from "@/components/dotted-separator";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useDeleteMember } from "@/features/members/api/use-delete-member";
-import { useUpdateMember } from "@/features/members/api/use-update-member";
-import { MemberRole } from "@/features/members/types";
-import { useConfirm } from "@/hooks/use-confirm";
+import { Separator } from "@/components/ui/separator";
 
 export const MembersList = () => {
   const workspaceId = useWorkspaceId();
   const [ConfirmDialog, confirm] = useConfirm(
     "Remove member",
-    "This member will be removed from the workspace",
+    "This member will be removed from the workspace.",
     "destructive"
   );
 
@@ -36,11 +38,12 @@ export const MembersList = () => {
     useUpdateMember();
 
   const handleUpdateMember = (memberId: string, role: MemberRole) => {
-    updateMember({ param: { memberId }, json: { role } });
+    updateMember({ json: { role }, param: { memberId } });
   };
 
   const handleDeleteMember = async (memberId: string) => {
     const ok = await confirm();
+
     if (!ok) return;
 
     deleteMember(
@@ -54,12 +57,12 @@ export const MembersList = () => {
   };
 
   return (
-    <Card className="w-full h-full border-none shadow-none">
+    <Card className="size-full border-none shadow-none">
       <ConfirmDialog />
       <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
         <Button asChild variant="secondary" size="sm">
           <Link href={`/workspaces/${workspaceId}`}>
-            <ArrowLeftIcon className="size-4 mr-2" />
+            <ArrowLeft className="size-4 mr-2" />
             Back
           </Link>
         </Button>
@@ -108,7 +111,9 @@ export const MembersList = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="font-medium text-amber-700"
-                    onClick={() => handleDeleteMember(member.$id)}
+                    onClick={() =>
+                      handleDeleteMember(member.$id)
+                    }
                     disabled={isDeletingMember}
                   >
                     Remove {member.name}

@@ -9,8 +9,10 @@ import {
   GoHome,
   GoHomeFill,
 } from "react-icons/go";
-import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+
 import { usePathname } from "next/navigation";
+
+import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 
 const routes = [
   {
@@ -44,11 +46,12 @@ export const Navigation = () => {
   const pathname = usePathname();
 
   return (
-    <div className="flex flex-col">
+    <ul className="flex flex-col">
       {routes.map((item) => {
         const fullHref = `/workspaces/${workspaceId}${item.href}`;
         const isActive = pathname === fullHref;
         const Icon = isActive ? item.activeIcon : item.icon;
+
         return (
           <Link key={item.href} href={fullHref}>
             <div
@@ -63,6 +66,6 @@ export const Navigation = () => {
           </Link>
         );
       })}
-    </div>
+    </ul>
   );
 };

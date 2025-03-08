@@ -1,16 +1,16 @@
 "use client";
 
 import { MenuIcon } from "lucide-react";
+
 import { Button } from "./ui/button";
-import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "./ui/sheet";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Sidebar } from "./sidebar";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 export const MobileSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname;
+  const pathname = usePathname();
 
   useEffect(() => {
     setIsOpen(false);
@@ -21,13 +21,10 @@ export const MobileSidebar = () => {
       <SheetTrigger asChild>
         <Button variant="secondary" className="lg:hidden">
           <MenuIcon className="size-4 text-neutral-500" />
+          <p className="sr-only">Menu</p>
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0">
-        <VisuallyHidden>
-          <SheetTitle />
-          <SheetDescription />
-        </VisuallyHidden>
         <Sidebar />
       </SheetContent>
     </Sheet>

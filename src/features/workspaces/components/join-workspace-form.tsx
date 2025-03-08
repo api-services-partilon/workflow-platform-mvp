@@ -1,5 +1,8 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import { DottedSeparator } from "@/components/dotted-separator";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,11 +12,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Link from "next/link";
 import { useJoinWorkspace } from "../api/use-join-workspace";
 import { useInviteCode } from "../hooks/use-invite-code";
 import { useWorkspaceId } from "../hooks/use-workspace-id";
-import { useRouter } from "next/navigation";
 
 interface JoinWorkspaceFormProps {
   initialValues: {
@@ -31,14 +32,7 @@ export const JoinWorkspaceForm = ({
 
   const onSubmit = () => {
     mutate(
-      {
-        param: {
-          workspaceId,
-        },
-        json: {
-          code: inviteCode,
-        },
-      },
+      { param: { workspaceId }, json: { code: inviteCode } },
       {
         onSuccess: ({ data }) => {
           router.push(`/workspaces/${data.$id}`);
@@ -48,11 +42,12 @@ export const JoinWorkspaceForm = ({
   };
 
   return (
-    <Card className="w-full h-full border-none shadow-none">
+    <Card className="size-full border-none shadow-none">
       <CardHeader className="p-7">
-        <CardTitle className="text-xl font-bold">Join Workspace</CardTitle>
+        <CardTitle className="text-xl font-bold">Join workspace</CardTitle>
         <CardDescription>
-          You&apos;ve been invite to join <strong>{initialValues.name}</strong>
+          You&apos;ve been invited to join <strong>{initialValues.name}</strong>{" "}
+          workspace.
         </CardDescription>
       </CardHeader>
       <div className="px-7">
@@ -72,8 +67,8 @@ export const JoinWorkspaceForm = ({
           </Button>
           <Button
             size="lg"
-            className="w-full lg:w-fit"
             type="button"
+            className="w-full lg:w-fit"
             onClick={onSubmit}
             disabled={isPending}
           >
