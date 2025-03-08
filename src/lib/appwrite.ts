@@ -7,13 +7,15 @@ import { cookies } from "next/headers";
 export async function createSessionClient() {
   const client = new Client()
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!)
+    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
 
-    const session = await cookies().get(AUTH_COOKIE);
+  const session = await cookies().get(AUTH_COOKIE);
 
-    if (!session || !session.value) throw new Error("Unauthorized");
+  if (!session || !session.value) {
+    throw new Error("Unauthorized");
+  }
 
-    client.setSession(session.value);
+  client.setSession(session.value);
 
   return {
     get account() {
@@ -21,7 +23,7 @@ export async function createSessionClient() {
     },
     get databases() {
       return new Databases(client);
-    }
+    },
   };
 }
 
@@ -31,12 +33,12 @@ export async function createAdminClient() {
     .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!)
     .setKey(process.env.NEXT_APPWRITE_SECRET_KEY!);
 
-    return {
+  return {
     get account() {
       return new Account(client);
     },
     get users() {
       return new Users(client);
-    }
+    },
   };
 }

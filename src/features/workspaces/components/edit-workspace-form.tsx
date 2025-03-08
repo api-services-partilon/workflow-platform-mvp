@@ -276,7 +276,7 @@ export const EditWorkspaceForm = ({
               variant="destructive"
               type="button"
               disabled={isPending || isResttingInviteCode}
-              onClick={handleCopyInviteLink}
+              onClick={handleRestInviteCode}
             >
               Reset invite link
             </Button>
