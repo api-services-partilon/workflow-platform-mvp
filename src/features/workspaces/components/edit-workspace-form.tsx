@@ -42,7 +42,7 @@ export const EditWorkspaceForm = ({
   const { mutate, isPending } = useUpdateWorkspace();
   const { mutate: deleteWorkspace, isPending: isDeletingWorkspace } =
     useDeleteWorkspace();
-    const { mutate: resetInviteCode, isPending: isResttingInviteCode } =
+  const { mutate: resetInviteCode, isPending: isResttingInviteCode } =
     useResetInviteCode();
 
   const [DeleteDialog, confirmDelete] = useConfirm(
@@ -106,8 +106,7 @@ export const EditWorkspaceForm = ({
       { form: finalValues, param: { workspaceId: initialValues.$id } },
       {
         onSuccess: ({ data }) => {
-          form.reset();
-          router.push(`/workspaces/${data.$id}`);
+          console.log(data);
         },
       }
     );
@@ -209,16 +208,34 @@ export const EditWorkspaceForm = ({
                             onChange={handleImageChange}
                             disabled={isPending || isDeletingWorkspace}
                           />
-                          <Button
-                            type="button"
-                            disabled={isPending || isDeletingWorkspace}
-                            variant="teritary"
-                            size="xs"
-                            className="w-fit mt-2"
-                            onClick={() => inputRef.current?.click()}
-                          >
-                            Upload Image
-                          </Button>
+                          {field.value ? (
+                            <Button
+                              type="button"
+                              disabled={isPending || isDeletingWorkspace}
+                              variant="destructive"
+                              size="xs"
+                              className="w-fit mt-2"
+                              onClick={() => {
+                                field.onChange("");
+                                if (inputRef.current) {
+                                  inputRef.current.value = "";
+                                }
+                              }}
+                            >
+                              Remove Image
+                            </Button>
+                          ) : (
+                            <Button
+                              type="button"
+                              disabled={isPending || isDeletingWorkspace}
+                              variant="teritary"
+                              size="xs"
+                              className="w-fit mt-2"
+                              onClick={() => inputRef.current?.click()}
+                            >
+                              Upload Image
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </div>
