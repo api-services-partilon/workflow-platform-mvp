@@ -19,6 +19,7 @@ import { DataTable } from "./data-table";
 
 import { useGetTasks } from "../api/use-get-tasks";
 import { useCreateTaskModal } from "../hooks/use-create-task-modal";
+import { useAiCreateTaskModal } from "../hooks/use-ai-create-task-modal";
 import { useTaskFilters } from "../hooks/use-task-filters";
 import { TaskStatus } from "../types";
 import { useBulkUpdateTasks } from "../api/use-bulk-update-tasks";
@@ -51,7 +52,8 @@ export const TaskViewSwitcher = ({
     [bulkUpdate]
   );
 
-  const { open } = useCreateTaskModal();
+  const { open: openModal } = useCreateTaskModal();
+  const { open: openAiModal } = useAiCreateTaskModal();
 
   return (
     <Tabs
@@ -72,10 +74,16 @@ export const TaskViewSwitcher = ({
               Calendar
             </TabsTrigger>
           </TabsList>
-          <Button onClick={open} size="sm" className="w-full lg:w-auto">
+          <div>
+          <Button onClick={openAiModal} size="sm" className="w-full lg:w-auto mr-2">
+            <PlusIcon className="size-4 mr-2" />
+            Gen AI
+          </Button>
+          <Button onClick={openModal} size="sm" className="w-full lg:w-auto">
             <PlusIcon className="size-4 mr-2" />
             New
           </Button>
+          </div>
         </div>
         <DottedSeparator className="my-4" />
         <DataFilters hideProjectFilter={hideProjectFilter} />
