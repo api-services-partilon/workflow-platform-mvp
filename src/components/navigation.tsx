@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { SettingsIcon, UsersIcon } from "lucide-react";
+import { CreditCard, SettingsIcon, UsersIcon } from "lucide-react";
 import Link from "next/link";
 import {
   GoCheckCircle,
@@ -39,6 +39,12 @@ const routes = [
     icon: UsersIcon,
     activeIcon: UsersIcon,
   },
+  // {
+  //   label: "Payments",
+  //   href: "/payments",
+  //   icon: CreditCard,
+  //   activeIcon: CreditCard,
+  // }
 ];
 
 export const Navigation = () => {

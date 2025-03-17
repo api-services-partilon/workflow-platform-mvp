@@ -1,4 +1,4 @@
-import { ExternalLink, PencilIcon, TrashIcon } from "lucide-react";
+import { Copy, ExternalLink, PencilIcon, TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { useConfirm } from "@/hooks/use-confirm";
@@ -13,6 +13,7 @@ import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 
 import { useDeleteTask } from "../api/use-delete-task";
 import { useEditTaskModal } from "../hooks/use-edit-task-modal";
+import { useCopyTask } from "../api/use-copy-task";
 
 interface TaskActionsProps {
   id: string;
@@ -31,7 +32,9 @@ export const TaskActions = ({ id, projectId, children }: TaskActionsProps) => {
     "This action cannot be undone.",
     "destructive"
   );
+
   const { mutate, isPending } = useDeleteTask();
+  const { mutate: copyTask, isPending: isCopying } = useCopyTask();
 
   const onDelete = async () => {
     const ok = await confirm();
@@ -46,6 +49,10 @@ export const TaskActions = ({ id, projectId, children }: TaskActionsProps) => {
 
   const onOpenProject = () => {
     router.push(`/workspaces/${workspaceId}/projects/${projectId}`);
+  };
+
+  const onCopy = async () => {
+    copyTask({ json: { taskId: id } });
   };
 
   return (
@@ -76,6 +83,10 @@ export const TaskActions = ({ id, projectId, children }: TaskActionsProps) => {
           >
             <PencilIcon className="size-4 mr-2 stroke-2" />
             Edit Task
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={onCopy} disabled={isPending} className="font-medium p-[10px]">
+            <Copy className="size-4 mr-2 stroke-2" />
+            Copy
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={onDelete}

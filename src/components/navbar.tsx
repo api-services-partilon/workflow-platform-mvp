@@ -5,6 +5,8 @@ import { UserButton } from "@/features/auth/components/user-button";
 import { usePathname } from "next/navigation";
 
 import { MobileSidebar } from "./mobile-sidebar";
+import Link from "next/link";
+import { Button } from "./ui/button";
 
 const pathnameMap = {
   tasks: {
@@ -36,6 +38,11 @@ export const Navbar = () => {
         <p className="text-muted-foreground">{description}</p>
       </div>
       <MobileSidebar />
+      <Link href={`/payments`}>
+      <Button>
+        Test Payments Here 
+      </Button>
+      </Link>
       <UserButton />
     </nav>
   );
