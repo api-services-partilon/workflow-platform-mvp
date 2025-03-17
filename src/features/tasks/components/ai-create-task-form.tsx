@@ -5,11 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
-import { MemberAvatar } from "@/features/members/components/member-avatar";
-import { ProjectAvatar } from "@/features/projects/components/project-avatar";
 
 import { cn } from "@/lib/utils";
-import { DatePicker } from "@/components/date-picker";
 import { DottedSeparator } from "@/components/dotted-separator";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,18 +18,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import { createTaskSchema } from "../schemas";
 import { useAiCreateTask } from "../api/use-ai-create-task";
-import { TaskStatus } from "../types";
 import { Textarea } from "@/components/ui/textarea";
 
 interface AiCreateTaskFormProps {
@@ -43,8 +31,6 @@ interface AiCreateTaskFormProps {
 
 export const AiCreateTaskForm = ({
   onCancel,
-  projectOptions,
-  memberOptions,
 }: AiCreateTaskFormProps) => {
   const workspaceId = useWorkspaceId();
   const { mutate, isPending } = useAiCreateTask();
