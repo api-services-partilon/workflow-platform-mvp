@@ -34,7 +34,7 @@ export const TaskActions = ({ id, projectId, children }: TaskActionsProps) => {
   );
 
   const { mutate, isPending } = useDeleteTask();
-  const { mutate: copyTask, isPending: isCopying } = useCopyTask();
+  const { mutate: copyTask } = useCopyTask();
 
   const onDelete = async () => {
     const ok = await confirm();
