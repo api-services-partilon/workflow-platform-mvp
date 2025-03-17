@@ -154,6 +154,65 @@ const app = new Hono()
     }
   )
   .post(
+    "/duplicate",
+    sessionMiddleware,
+    zValidator("json", z.object({ taskId: z.string() })),
+    async (c) => {
+      const user = c.get("user");
+      const databases = c.get("databases");
+      const { taskId } = c.req.valid("json");
+
+      const task = await databases.getDocument<Task>(
+        DATABASE_ID,
+        TASKS_ID,
+        taskId
+      );
+
+      const member = await getMember({
+        databases,
+        workspaceId: task.workspaceId,
+        userId: user.$id,
+      });
+
+      if (!member) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const highestPositionTask = await databases.listDocuments(
+        DATABASE_ID,
+        TASKS_ID,
+        [
+          Query.equal("status", task.status),
+          Query.equal("workspaceId", task.workspaceId),
+          Query.orderAsc("position"),
+          Query.limit(1),
+        ]
+      );
+
+      const newPosition =
+        highestPositionTask.documents.length > 0
+          ? highestPositionTask.documents[0].position + 1000
+          : 1000;
+
+      const newTask = await databases.createDocument(
+        DATABASE_ID,
+        TASKS_ID,
+        ID.unique(),
+        {
+          name: task.name,
+          status: task.status,
+          workspaceId: task.workspaceId,
+          projectId: task.projectId,
+          dueDate: task.dueDate,
+          assigneeId: task.assigneeId,
+          position: newPosition,
+        }
+      );
+
+      return c.json({ data: newTask });
+    }
+  )
+  .post(
     "/",
     sessionMiddleware,
     zValidator("json", createTaskSchema),
