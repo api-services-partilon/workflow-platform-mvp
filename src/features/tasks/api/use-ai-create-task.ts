@@ -5,15 +5,15 @@ import { InferRequestType, InferResponseType } from "hono";
 
 import { client } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<(typeof client.api.tasks)["$post"], 200>;
-type RequestType = InferRequestType<(typeof client.api.tasks)["$post"]>;
+type ResponseType = InferResponseType<(typeof client.api.tasks)["generate"]["$post"], 200>;
+type RequestType = InferRequestType<(typeof client.api.tasks)["generate"]["$post"]>;
 
 export const useAiCreateTask = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ json }) => {
-      const response = await client.api.tasks.$post({ json });
+      const response = await client.api.tasks.generate.$post({ json });
 
       if (!response.ok) {
         throw new Error("Failed to create task.");

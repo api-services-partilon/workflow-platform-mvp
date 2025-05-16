@@ -143,7 +143,7 @@ export const CreateTaskForm = ({
                 name="status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Assignee</FormLabel>
+                    <FormLabel>Status</FormLabel>
                     <Select
                       defaultValue={field.value}
                       onValueChange={field.onChange}

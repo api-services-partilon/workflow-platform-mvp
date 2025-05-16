@@ -10,7 +10,7 @@ import { createAdminClient } from "@/lib/appwrite";
 import { getMember } from "@/features/members/utils";
 import { Project } from "@/features/projects/types";
 
-import { createTaskSchema } from "../schemas";
+import { automateTaskSchema, createTaskSchema } from "../schemas";
 import { Task, TaskStatus } from "../types";
 
 const app = new Hono()
@@ -431,6 +431,81 @@ const app = new Hono()
       );
 
       return c.json({ data: updatedTasks });
+    }
+  )
+  .post(
+    "/generate",
+    sessionMiddleware,
+    zValidator("json", automateTaskSchema),
+    async (c) => {
+      const user = c.get("user");
+      const databases = c.get("databases");
+      const { workspaceId, projectId, assigneeId, description } = c.req.valid("json");
+
+      const member = await getMember({
+        databases,
+        workspaceId,
+        userId: user.$id,
+      });
+
+      if (!member) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const response = await fetch(process.env.NEXT_PUBLIC_RAG_ENDPOINT!, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ description }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate task.");
+      }
+
+      const data = await response.json();
+
+      console.log(data);
+
+      const createdTasks = [];
+
+      for (const taskItem of data.tasks) {
+        const highestPositionTask = await databases.listDocuments(
+          DATABASE_ID,
+          TASKS_ID,
+          [
+            Query.equal("status", taskItem.status),
+            Query.equal("workspaceId", workspaceId),
+            Query.orderAsc("position"),
+            Query.limit(1),
+          ]
+        );
+
+        const newPosition =
+          highestPositionTask.documents.length > 0
+            ? highestPositionTask.documents[0].position + 1000
+            : 1000;
+
+        const createdTask = await databases.createDocument(
+          DATABASE_ID,
+          TASKS_ID,
+          ID.unique(),
+          {
+            name: taskItem.name,
+            status: taskItem.status,
+            workspaceId,
+            projectId,
+            dueDate: taskItem.due_date,
+            assigneeId,
+            position: newPosition,
+          }
+        );
+
+        createdTasks.push(createdTask);
+      }
+
+      return c.json({ data: createdTasks });
     }
   );
 
