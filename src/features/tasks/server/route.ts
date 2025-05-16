@@ -496,7 +496,7 @@ const app = new Hono()
             status: taskItem.status,
             workspaceId,
             projectId,
-            dueDate: taskItem.due_date,
+            dueDate: taskItem.dueDate,
             assigneeId,
             position: newPosition,
           }
